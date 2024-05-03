@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, SubmitField, SelectField
+from wtforms import StringField, FloatField, SubmitField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Length, NumberRange, DataRequired
+from utils import fetch_country_codes
 
 class FuelPredictionForm(FlaskForm):
     airline_iata = StringField('Airline IATA Code', validators=[InputRequired(), Length(min=2, max=3)], description="Enter the IATA code of the operator.")
@@ -16,3 +17,22 @@ class FuelPredictionForm(FlaskForm):
     fuel_burn_seymour = FloatField('Fuel Burn per Flight (kg)', validators=[InputRequired(), NumberRange(min=0)], description="Enter the fuel burn per flight in kg when seymour proxy available.")
     fuel_burn = FloatField('Total Fuel Burn (kg)', validators=[InputRequired(), NumberRange(min=0)], description="Enter the total fuel burn of the data entry in kg.")
     submit = SubmitField('Predict')
+
+
+class EmissionForm(FlaskForm):
+    country = SelectField('Country', choices=[(code, name) for code, name in fetch_country_codes().items()],
+                          validators=[DataRequired()], render_kw={"class": "select2-enable"})
+    timeframe = SelectField('Timeframe', choices=[('annual', 'Annual'), ('monthly', 'Monthly'), ('quarterly', 'Quarterly')],
+                            validators=[DataRequired()])
+    start_year = IntegerField('Start Year', validators=[DataRequired(), NumberRange(min=2013, message="The earliest start year allowed is 2013.")])
+    month = SelectField('Month', choices=[(str(i), str(i).zfill(2)) for i in range(1, 13)],
+                        validators=[DataRequired()], default=None)
+    quarter = SelectField('Quarter', choices=[(str(i), 'Q' + str(i)) for i in range(1, 5)],
+                          validators=[DataRequired()], default=None)
+    end_year = IntegerField('End Year', validators=[DataRequired()])
+    end_month = SelectField('Month', choices=[(str(i), str(i).zfill(2)) for i in range(1, 13)],
+                            validators=[DataRequired()], default=None)
+    end_quarter = SelectField('Quarter', choices=[(str(i), 'Q' + str(i)) for i in range(1, 5)],
+                              validators=[DataRequired()], default=None)
+    submit = SubmitField('Generate Report')
+
