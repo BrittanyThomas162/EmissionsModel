@@ -1,44 +1,136 @@
 {% extends 'base.html' %} {% block main %}
-<h1>Emissions Predictor</h1>
-<form method="POST" action="{{ url_for('fuelPrediction') }}" class="form-group">
-  {{ form.csrf_token }}
-  <div class="form-group">
-    {{ form.n_flights.label(class="form-label") }} {{
-    form.n_flights(class="form-control", placeholder="48") }}
-  </div>
-  <div class="form-group">
-    {{ form.airline_iata.label(class="form-label") }} {{
-    form.airline_iata(class="form-control", placeholder="MS") }}
-  </div>
-  <div class="form-group">
-    {{ form.acft_icao.label(class="form-label") }} {{
-    form.acft_icao(class="form-control", placeholder="A320") }}
-  </div>
-  <div class="form-group">
-    {{ form.seats.label(class="form-label") }} {{
-    form.seats(class="form-control", placeholder="7971") }}
-  </div>
-  <div class="form-group">
-    {{ form.icao_departure.label(class="form-label") }} {{
-    form.icao_departure(class="form-control", placeholder="EGLL") }}
-  </div>
-  <div class="form-group">
-    {{ form.icao_arrival.label(class="form-label") }} {{
-    form.icao_arrival(class="form-control", placeholder="KJFK") }}
-  </div>
-  <div class="form-group">
-    {{ form.fuel_burn_seymour.label(class="form-label") }} {{
-    form.fuel_burn_seymour(class="form-control", placeholder="2721.74") }}
-  </div>
-  <input type="submit" value="Predict" class="btn btn-primary" />
+<h1 class="main-heading-1">Emissions Predictor</h1>
+<div class="container mt-4">
+  <form
+    method="POST"
+    action="{{ url_for('fuelPrediction') }}"
+    class="form-group"
+  >
+    {{ form.csrf_token }}
+    <div class="row">
+      <div class="col-md-3">
+        {{ form.n_flights.label(class="form-label") }} {{
+        form.n_flights(class="form-control", placeholder="48") }}
+      </div>
+      <div class="col-md-3">
+        {{ form.airline_iata.label(class="form-label") }} {{
+        form.airline_iata(class="form-control", placeholder="MS") }}
+      </div>
+      <div class="col-md-3">
+        {{ form.acft_icao.label(class="form-label") }} {{
+        form.acft_icao(class="form-control", placeholder="A320") }}
+      </div>
+      <div class="col-md-3">
+        {{ form.seats.label(class="form-label") }} {{
+        form.seats(class="form-control", placeholder="7971") }}
+      </div>
+    </div>
+    <div class="row mt-2">
+      <div class="col-md-3">
+        {{ form.icao_departure.label(class="form-label") }} {{
+        form.icao_departure(class="form-control", placeholder="EGLL") }}
+      </div>
+      <div class="col-md-3">
+        {{ form.icao_arrival.label(class="form-label") }} {{
+        form.icao_arrival(class="form-control", placeholder="KJFK") }}
+      </div>
+      <div class="col-md-3">
+        {{ form.fuel_burn_seymour.label(class="form-label") }} {{
+        form.fuel_burn_seymour(class="form-control", placeholder="2721.74") }}
+      </div>
+      <div class="col-md-3 d-flex align-items-end justify-content-center">
+        {{ form.submit(class="btn btn-primary") }}
+      </div>
+    </div>
+  </form>
 
   {% if prediction %}
-  <div class="results">
-    <hr />
-    <br />
-    <h2>Prediction Results</h2>
-    <p>Total CO2 Emissions: {{ prediction }} kg</p>
-    <p>Average Emissions per Flight: {{ average_emissions_per_flight }} kg</p>
+  <!-- <hr class="divider" /> -->
+  <div class="results mt-4">
+    <h2 class="results-header">Prediction Results</h2>
+    <p class="results-value">
+      <span class="results-label">Total CO2 Emissions:</span> {{ prediction }}
+      kg
+    </p>
+    <p class="results-value">
+      <span class="results-label">Average Emissions per Flight:</span> {{
+      average_emissions_per_flight }} kg
+    </p>
   </div>
-  {% endif %} {% endblock %}
-</form>
+  {% endif %}
+</div>
+{% endblock %} {% block css %}
+<style>
+  .main-heading-1 {
+    margin-bottom: 2rem;
+  }
+  .container {
+    max-width: 960px;
+    margin: auto;
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .row {
+    margin-top: 10px;
+  }
+  .col-md-3 {
+    padding-right: 5px;
+    padding-left: 5px;
+  }
+  .d-flex {
+    display: flex;
+  }
+  .align-items-end {
+    align-items: flex-end;
+  }
+  .justify-content-center {
+    justify-content: center;
+  }
+
+  .results .mt-4 {
+    margin-top: 5rem;
+  }
+  /* .results h2 {
+    color: #333;
+  }
+  .results p {
+    font-size: 1.2rem;
+    color: #555;
+  } */
+  .results {
+    padding: 20px;
+    background-color: #f0faff;
+    border: 1px solid #0090c1;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+  }
+  .results-header {
+    /* color: #005580; */
+    text-transform: uppercase;
+    font-size: 1.5rem;
+  }
+  .results-value {
+    font-size: 1.3rem;
+    /* color: #333; */
+    margin: 15px 0;
+    font-weight: bold;
+    color: #005580;
+  }
+  .results-label {
+    font-weight: normal;
+    color: black;
+  }
+
+  /* .divider {
+    margin-top: 4rem;
+    margin-bottom: 3rem;
+  } */
+
+  .btn {
+    margin-top: 1rem;
+  }
+</style>
+{% endblock %}
