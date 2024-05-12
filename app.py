@@ -177,88 +177,6 @@ def generateReport():
     return render_template('reportform.html', form=form)
 
 
-
-# @app.route('/emissions/report', methods=['GET', 'POST'])
-# def generateReport():
-#     form = EmissionForm()
-#     if form.validate_on_submit():
-#         country_name = get_country_name_by_code(form.country.data)
-#         raw_data = get_emissions(
-#             country=form.country.data,
-#             timeframe=form.timeframe.data,
-#             start_year=form.start_year.data,
-#             month=form.month.data if form.month.data else None,
-#             quarter=form.quarter.data if form.quarter.data else None,
-#             end_year=form.end_year.data,
-#             end_month=form.end_month.data if form.end_month.data else None,
-#             end_quarter=form.end_quarter.data if form.end_quarter.data else None
-#         )
-
-#         if raw_data in ["NoRecordsFound", "ErrorParsingXML", "Failed to retrieve data"]:
-#             flash('No data available for the selected parameters.' if raw_data == "NoRecordsFound" else 'There was an error processing your request. Please try again later.', 'warning')
-#             return redirect(url_for('generateReport'))
-
-#         # Sorting data based on time_period
-#         sorted_data = sorted(raw_data, key=lambda x: x['time_period'])
-
-#         # Summarizing data
-#         data_summary = {}
-#         total_emissions = 0
-#         for item in sorted_data:
-#             time_key = item['time_period']
-#             emissions = item['emissions']
-#             total_emissions += emissions
-#             data_summary.setdefault(time_key, 0)
-#             data_summary[time_key] += emissions
-        
-#         return render_template('report.html', data_summary=data_summary, total_emissions=total_emissions, country=country_name, timeframe=form.timeframe.data, start_year=form.start_year.data, end_year=form.end_year.data)
-#     else:
-#         # If there is a validation error, the form will be rendered with error messages
-#         for fieldName, errorMessages in form.errors.items():
-#             for err in errorMessages:
-#                 flash(f'Error in {fieldName}: {err}', 'danger')
-#     return render_template('reportform.html', form=form)
-
-# @app.route('/emissions/report', methods=['GET', 'POST'])
-# def generateReport():
-#     form = EmissionForm()
-#     if form.validate_on_submit():
-#         country_name = get_country_name_by_code(form.country.data)
-#         raw_data = get_emissions(
-#             country=form.country.data,
-#             timeframe=form.timeframe.data,
-#             start_year=form.start_year.data,
-#             month=form.month.data if form.month.data else None,
-#             quarter=form.quarter.data if form.quarter.data else None,
-#             end_year=form.end_year.data,
-#             end_month=form.end_month.data if form.end_month.data else None,
-#             end_quarter=form.end_quarter.data if form.end_quarter.data else None
-#         )
-
-#         if raw_data == "NoRecordsFound":
-#             flash('No data available for the selected parameters.', 'warning')
-#             return redirect(url_for('generateReport'))
-#         elif raw_data == "ErrorParsingXML" or raw_data == "Failed to retrieve data":
-#             flash('There was an error processing your request. Please try again later.', 'error')
-#             return redirect(url_for('generateReport'))
-
-#         data_summary = {}
-#         total_emissions = 0
-#         for item in raw_data:
-#             time_key = item['time_period']
-#             emissions = float(item['emissions'])
-#             total_emissions += emissions
-#             data_summary.setdefault(time_key, 0)
-#             data_summary[time_key] += emissions
-#         return render_template('report.html', data_summary=data_summary, total_emissions=total_emissions, country=country_name, timeframe=form.timeframe.data, start_year=form.start_year.data, end_year=form.end_year.data)
-#     else:
-#             # If there is a validation error, the form will be rendered with error messages
-#             for fieldName, errorMessages in form.errors.items():
-#                 for err in errorMessages:
-#                     flash(f'Error in {fieldName}: {err}', 'danger')
-#     return render_template('reportform.html', form=form)
-
-
 # Works and retruns  a dictionary
 def get_emissions(country, timeframe, start_year, month, quarter, end_year, end_month, end_quarter):
     base_url = "https://sdmx.oecd.org/public/rest/data"
@@ -318,8 +236,10 @@ def get_country_name_by_code(country_code):
 def fetch_data(url):
     response = requests.get(url)
     if response.status_code == 200:
-        return ET.fromstring(response.content)
-    return None
+        return ET.fromstring(response.content), None
+    else:
+        error_message = f"Failed to fetch data: {response.status_code} - {response.reason}"
+        return None, error_message
 
 @app.route('/emissions-ranking', methods=['GET', 'POST'])
 def country_ranking():
@@ -347,9 +267,15 @@ def country_ranking():
         print('start_period', start_period)
         print('end_period ', end_period)
         print(url)
-        root = fetch_data(url)
+
+        root, error_message = fetch_data(url)
+        if error_message:
+            flash(error_message, 'danger')  # Flash an error messag
+            return redirect(url_for('country_ranking')) 
+
         country_data = {}
         total_emissions = 0
+
         if root:
             for obs in root.findall('.//generic:Obs', namespaces={'generic': 'http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic'}):
                 country_code = obs.find('.//generic:Value[@id="REF_AREA"]', namespaces={'generic': 'http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic'}).attrib['value']
@@ -357,6 +283,8 @@ def country_ranking():
                 country_data[country_code] = country_data.get(country_code, 0) + emissions
                 total_emissions += emissions
 
+            print('country_data', country_data)
+            print('total_emissions', total_emissions)
             emissions_values = list(country_data.values())
             low_threshold, high_threshold = np.percentile(emissions_values, [33, 66])
             
