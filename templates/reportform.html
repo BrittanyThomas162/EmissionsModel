@@ -83,36 +83,4 @@
   });
 </script>
 
-{% endblock %} {% block js %}
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
-<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-<script>
-  $(document).ready(function () {
-    // Initialize Select2 on elements with the class 'select2-enable'
-    $(".select2-enable").select2({
-      placeholder: "Select a country",
-      allowClear: true,
-    });
-
-    const timeframeSelect = document.querySelector("#timeframe");
-    const monthlyFields = document.querySelector("#monthly_fields");
-    const quarterlyFields = document.querySelector("#quarterly_fields");
-
-    function toggleFields() {
-      monthlyFields.style.display = "none";
-      quarterlyFields.style.display = "none";
-
-      if (timeframeSelect.value === "monthly") {
-        monthlyFields.style.display = "block";
-      } else if (timeframeSelect.value === "quarterly") {
-        quarterlyFields.style.display = "block";
-      }
-    }
-
-    timeframeSelect.addEventListener("change", toggleFields);
-    toggleFields(); // Ensure correct fields are shown on initial load
-  });
-</script> -->
-
 {% endblock %}
