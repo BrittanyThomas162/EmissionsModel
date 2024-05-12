@@ -129,8 +129,8 @@ def generateReport():
             country=form.country.data,
             timeframe=form.timeframe.data,
             start_year=form.start_year.data,
-            month=form.month.data if form.month.data else None,
-            quarter=form.quarter.data if form.quarter.data else None,
+            month=form.start_month.data if form.start_month.data else None,
+            quarter=form.start_quarter.data if form.start_quarter.data else None,
             end_year=form.end_year.data,
             end_month=form.end_month.data if form.end_month.data else None,
             end_quarter=form.end_quarter.data if form.end_quarter.data else None
@@ -331,10 +331,12 @@ def country_ranking():
         form.end_month.data = '12'
     
     if form.validate_on_submit() or request.method == 'GET':
-        start_year = form.start_year.data
-        start_month = form.start_month.data
+        start_year = int(form.start_year.data)
+        start_month = int(form.start_month.data)
         end_year = start_year  # Assume same year for simplicity
-        end_month = form.end_month.data
+        end_month = int(form.end_month.data)
+
+        print("timeframe ", start_month, start_year," to ",  end_month, end_year)
 
         base_url = "https://sdmx.oecd.org/public/rest/data"
         dataflow = "OECD.SDD.NAD.SEEA,DSD_AIR_TRANSPORT@DF_AIR_TRANSPORT,1.0"
@@ -342,6 +344,8 @@ def country_ranking():
         start_period = f"{start_year}-{start_month:02}"
         end_period = f"{end_year}-{end_month:02}"
         url = f"{base_url}/{dataflow}/{time_suffix}?startPeriod={start_period}&endPeriod={end_period}&dimensionAtObservation=AllDimensions"
+        print('start_period', start_period)
+        print('end_period ', end_period)
         print(url)
         root = fetch_data(url)
         country_data = {}
@@ -379,166 +383,6 @@ def country_ranking():
                                    end_year=end_year, end_month=end_month)
 
     return render_template('ranking.html', form=form)
-
-# @app.route('/emissions-ranking', methods=['GET', 'POST'])
-# def country_ranking():
-#     current_year = datetime.now().year
-#     form = EmissionRankingForm()
-#     if request.method == 'GET':
-#         form.start_year.data = current_year - 1
-#         form.start_month.data = '1'
-#         form.end_month.data = '12'
-    
-#     if form.validate_on_submit() or request.method == 'GET':
-#         start_year = form.start_year.data
-#         start_month = form.start_month.data
-#         end_year = start_year  # Assume same year for simplicity
-#         end_month = form.end_month.data
-#         order = form.order.data
-
-#         base_url = "https://sdmx.oecd.org/public/rest/data"
-#         dataflow = "OECD.SDD.NAD.SEEA,DSD_AIR_TRANSPORT@DF_AIR_TRANSPORT,1.0"
-#         time_suffix = ".M......."
-#         start_period = f"{start_year}-{start_month:02}"
-#         end_period = f"{end_year}-{end_month:02}"
-#         url = f"{base_url}/{dataflow}/{time_suffix}?startPeriod={start_period}&endPeriod={end_period}&dimensionAtObservation=AllDimensions"
-
-#         root = fetch_data(url)
-#         country_data = {}
-#         total_emissions = 0
-#         if root:
-#             for obs in root.findall('.//generic:Obs', namespaces={'generic': 'http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic'}):
-#                 country_code = obs.find('.//generic:Value[@id="REF_AREA"]', namespaces={'generic': 'http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic'}).attrib['value']
-#                 emissions = float(obs.find('.//generic:ObsValue', namespaces={'generic': 'http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic'}).attrib['value'])
-#                 country_data[country_code] = country_data.get(country_code, 0) + emissions
-#                 total_emissions += emissions
-
-#             formatted_countries = [
-#                 (get_country_name_by_code(code), format(emissions, ',.2f'), format((emissions / total_emissions) * 100, '.2f'))
-#                 for code, emissions in country_data.items()
-#             ]
-
-#             sorted_countries = sorted(
-#                 formatted_countries,
-#                 key=lambda item: float(item[1].replace(',', '')),
-#                 reverse=(order == 'descending')
-#             )
-#         else:
-#             sorted_countries = []
-#             flash('No data available or an error occurred with the request.', 'warning')
-
-#         average_emissions = total_emissions / len(country_data) if country_data else 0
-
-#         return render_template('ranking.html', form=form, countries=sorted_countries,
-#                                total_emissions=format(total_emissions, ',.2f'), 
-#                                average_emissions=format(average_emissions, ',.2f'),
-#                                start_year=start_year, start_month=start_month, 
-#                                end_year=end_year, end_month=end_month)
-
-#     return render_template('ranking.html', form=form)
-
-
-# @app.route('/emissions-ranking', methods=['GET', 'POST'])
-# def country_ranking():
-#     current_year = datetime.now().year
-#     form = EmissionRankingForm()
-#     if request.method == 'GET':
-#         form.start_year.data = current_year - 1
-#         form.start_month.data = '1'
-#         # form.end_year.data = current_year - 1
-#         form.end_month.data = '12'
-    
-#     if form.validate_on_submit() or request.method == 'GET':
-#         start_year = form.start_year.data
-#         start_month = form.start_month.data
-#         # end_year = form.end_year.data
-#         end_year = form.start_year.data
-#         end_month = form.end_month.data
-#         order = form.order.data
-
-#         base_url = "https://sdmx.oecd.org/public/rest/data"
-#         dataflow = "OECD.SDD.NAD.SEEA,DSD_AIR_TRANSPORT@DF_AIR_TRANSPORT,1.0"
-#         time_suffix = ".M......."
-#         start_period = f"{start_year}-{start_month:02}"
-#         end_period = f"{end_year}-{end_month:02}"
-#         url = f"{base_url}/{dataflow}/{time_suffix}?startPeriod={start_period}&endPeriod={end_period}&dimensionAtObservation=AllDimensions"
-
-#         print(url)
-#         root = fetch_data(url)
-#         country_data = {}
-#         if root:
-#             for obs in root.findall('.//generic:Obs', namespaces={'generic': 'http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic'}):
-#                 country_code = obs.find('.//generic:Value[@id="REF_AREA"]', namespaces={'generic': 'http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic'}).attrib['value']
-#                 emissions = float(obs.find('.//generic:ObsValue', namespaces={'generic': 'http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic'}).attrib['value'])
-#                 country_data[country_code] = country_data.get(country_code, 0) + emissions
-
-#             formatted_countries = [
-#                 (get_country_name_by_code(code), format(emissions, ',.2f'))
-#                 for code, emissions in country_data.items()
-#             ]
-
-#             sorted_countries = sorted(
-#                 formatted_countries,
-#                 key=lambda item: float(item[1].replace(',', '')),
-#                 reverse=(order == 'descending')
-#             )
-#         else:
-#             sorted_countries = []
-#             flash('No data available or an error occurred with the request.', 'warning')
-        
-#         return render_template('ranking.html', form=form, countries=sorted_countries, 
-#                                start_year=start_year, start_month=start_month, 
-#                                end_year=end_year, end_month=end_month)
-
-#     return render_template('ranking.html', form=form)
-
-
-# @app.route('/emissions-ranking', methods=['GET', 'POST'])
-# def country_ranking():
-#     current_year = datetime.now().year
-#     form = EmissionRankingForm()
-#     if request.method == 'GET':
-#         form.start_year.data = current_year - 1
-#         form.start_month.data = '1'
-#         form.end_year.data = current_year - 1
-#         form.end_month.data = '12'
-    
-#     if form.validate_on_submit() or request.method == 'GET':
-#         start_year = form.start_year.data
-#         start_month = form.start_month.data
-#         end_year = form.end_year.data
-#         end_month = form.end_month.data
-#         order = form.order.data
-
-#         base_url = "https://sdmx.oecd.org/public/rest/data"
-#         dataflow = "OECD.SDD.NAD.SEEA,DSD_AIR_TRANSPORT@DF_AIR_TRANSPORT,1.0"
-#         time_suffix = ".M......."
-#         start_period = f"{start_year}-{start_month:02}"
-#         end_period = f"{end_year}-{end_month:02}"
-#         url = f"{base_url}/{dataflow}/{time_suffix}?startPeriod={start_period}&endPeriod={end_period}&dimensionAtObservation=AllDimensions"
-
-#         root = fetch_data(url)
-#         country_data = {}
-#         if root:
-#             for obs in root.findall('.//generic:Obs', namespaces={'generic': 'http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic'}):
-#                 country_code = obs.find('.//generic:Value[@id="REF_AREA"]', namespaces={'generic': 'http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic'}).attrib['value']
-#                 emissions = float(obs.find('.//generic:ObsValue', namespaces={'generic': 'http://www.sdmx.org/resources/sdmxml/schemas/v2_1/data/generic'}).attrib['value'])
-#                 country_data[country_code] = country_data.get(country_code, 0) + emissions
-
-#             sorted_countries = sorted(
-#                 ((get_country_name_by_code(code), emissions) for code, emissions in country_data.items()),
-#                 key=lambda item: item[1],
-#                 reverse=(order == 'descending')
-#             )
-#         else:
-#             sorted_countries = []
-#             flash('No data available or an error occurred with the request.', 'warning')
-
-#         return render_template('ranking.html', form=form, countries=sorted_countries)
-
-#     return render_template('ranking.html', form=form)
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)

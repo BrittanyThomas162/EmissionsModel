@@ -31,14 +31,14 @@ class EmissionForm(FlaskForm):
     timeframe = SelectField('Timeframe', choices=[('annual', 'Annual'), ('monthly', 'Monthly'), ('quarterly', 'Quarterly')],
                             validators=[DataRequired()])
     start_year = IntegerField('Start Year', validators=[DataRequired(), NumberRange(min=2013, message="The earliest start year allowed is for an annual timeframe is 2013.")])
-    month = SelectField('Month', choices=[(str(i), str(i).zfill(2)) for i in range(1, 13)],
+    start_month = SelectField('Start Month', choices=[(str(i), str(i).zfill(2)) for i in range(1, 13)],
                         validators=[DataRequired()], default=None)
-    quarter = SelectField('Quarter', choices=[(str(i), 'Q' + str(i)) for i in range(1, 5)],
+    start_quarter = SelectField('Start Quarter', choices=[(str(i), 'Q' + str(i)) for i in range(1, 5)],
                           validators=[DataRequired()], default=None)
     end_year = IntegerField('End Year', validators=[DataRequired()])
-    end_month = SelectField('Month', choices=[(str(i), str(i).zfill(2)) for i in range(1, 13)],
+    end_month = SelectField('End Month', choices=[(str(i), str(i).zfill(2)) for i in range(1, 13)],
                             validators=[DataRequired()], default=None)
-    end_quarter = SelectField('Quarter', choices=[(str(i), 'Q' + str(i)) for i in range(1, 5)],
+    end_quarter = SelectField('End Quarter', choices=[(str(i), 'Q' + str(i)) for i in range(1, 5)],
                               validators=[DataRequired()], default=None)
     submit = SubmitField('Generate Report')
 
