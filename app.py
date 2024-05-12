@@ -63,6 +63,7 @@ def fuelPrediction():
     # Load the LabelEncoder for categorical columns
     label_encoder = LabelEncoder()
     prediction = None  # Initialize prediction and average emissions per flight
+    formatted_prediction = None
     average_emissions_per_flight = None
     form = FuelPredictionForm()
     if form.validate_on_submit():
@@ -72,14 +73,12 @@ def fuelPrediction():
         seats = float(form.seats.data)
         n_flights = float(form.n_flights.data)
         n = float(form.n_flights.data)
-        iata_departure = form.iata_departure.data.upper()
-        iata_arrival = form.iata_arrival.data.upper()
+        # iata_departure = form.iata_departure.data.upper()
+        # iata_arrival = form.iata_arrival.data.upper()
         icao_departure = form.icao_departure.data.upper()
         icao_arrival = form.icao_arrival.data.upper() 
         fuel_burn_seymour = float(form.fuel_burn_seymour.data)
 
-        print('iata_departure ', iata_departure)
-        print('iata_arrival ', iata_arrival)
         # Get the distance between the departure and arrival airports
         distance_km = get_distance(icao_departure, icao_arrival)
         if distance_km is None:
@@ -96,7 +95,8 @@ def fuelPrediction():
         print('calculated fuel_burn ', fuel_burn)
 
         # Prepare data for model
-        data = np.array([airline_iata, acft_icao, iata_departure, iata_arrival])  # Categorical data
+        data = np.array([airline_iata, acft_icao])  # Categorical data
+        # data = np.array([airline_iata, acft_icao, iata_departure, iata_arrival])  # Categorical data
         numerical_data = np.array([seats, n_flights, distance_km, rpk,fuel_burn_seymour, fuel_burn])  # Numerical data
 
          # Encode categorical data
