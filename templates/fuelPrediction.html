@@ -87,6 +87,18 @@
   </div>
 
   
+   <!-- Google  Verification Section -->
+   <div class="verification-section">
+    <h2>Verify Model Predictions</h2>
+    <p>To evaluate the accuracy of our Emissions Estimator Bot (eeb2), compare its predictions against the CO<sub>2</sub> emissions data listed on Google Flights for different airlines. Here’s how you can verify:</p>
+    <ol>
+      <li>Visit <a href="https://www.google.com/travel/flights" target="_blank">Google Flights</a>.</li>
+      <li>Enter the airport name or IATA code for your departure and arrival airports. If you are using ICAO codes in our model, you may convert them to IATA codes using this <a href="https://www.avcodes.co.uk/aptcodesearch.asp" target="_blank">conversion tool</a>, or simply use the airport name.</li>
+      <li>Review the CO<sub>2</sub> emissions values provided for different airlines on the selected route.</li>
+      <li>Compare these emissions data with the predictions from eeb2. Our model’s estimates should fall within the range of these values, considering variations due to different operational conditions by airlines.</li>
+    </ol>
+    <p>Our model incorporates predicted weather conditions in its calculations, offering a unique and precise approach to estimating emissions, enhancing the accuracy of your environmental impact assessments.</p>
+  </div>
 </div>
 
 {% endblock %} {% block css %}
@@ -202,5 +214,35 @@
     margin-top: 4rem;
     margin-bottom: 3rem;
   } */
+
+  /* Google verification */
+  .verification-section {
+    background-color: #f9f9f9;  /* Light grey background for distinction */
+    border-left: 5px solid #5cb85c;  /* Green left border for emphasis */
+    padding: 20px;  /* Padding for content inside the box */
+    margin-top: 20px;  /* Space above the section */
+    margin-bottom: 20px;  /* Space below the section */
+  }
+  .verification-section h2 {
+    color: #333;  /* Dark grey for the heading */
+  }
+  .verification-section p, .verification-section ol {
+    font-size: 1rem;  /* Standard font size for text */
+    color: #666;  /* Lighter grey for text for easier reading */
+    line-height: 1.6;  /* Line height for better readability */
+  }
+  .verification-section a {
+    color: #007bff;  /* Standard link color */
+    text-decoration: none;  /* No underline to keep it clean */
+  }
+  .verification-section a:hover {
+    text-decoration: underline;  /* Underline on hover for usability */
+  }
+  .verification-section ol {
+    margin-left: 20px;  /* Indent for the ordered list */
+  }
+  .verification-section li {
+    margin-bottom: 10px;  /* Space between list items */
+  }
 </style>
 {% endblock %}
