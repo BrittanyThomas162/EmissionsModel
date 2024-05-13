@@ -58,7 +58,37 @@
     </p>
   </div>
   {% endif %}
+
+  <!-- Description about the dataset and how to validate the model -->
+  <div class="dataset-info">
+    <h3 >About our Predictor</h2>
+    <p>
+      This Predictor utilizes data derived from the AeroSCOPE project, an
+      open-source initiative providing detailed information on global passenger
+      air traffic using methodologies developed through collaborative research
+      and publicly available data from various aviation authorities and
+      organizations, such as ANAC, BTS, Eurocontrol, and the World Bank. For
+      verifying the accuracy of our predicions, a
+      preview of the test dataset is available below.
+
+      <div class="google-sheet-preview">
+        <img
+          src="{{ url_for('static', filename='dataset-Excel.png') }}"
+          alt="Google Sheet Preview"
+        />
+        <a
+          href="https://docs.google.com/spreadsheets/d/19bd3XdN6OALCQp59dAq_NnSlxPmb7sVo6RXK8mPD9dQ/edit?usp=sharing"
+          target="_blank"
+          class="view-full-sheet"
+          >View Full Sheet</a
+        >
+      </div>
+    </p>
+  </div>
+
+  
 </div>
+
 {% endblock %} {% block css %}
 <style>
   .main-heading-1 {
@@ -124,6 +154,50 @@
     color: black;
   }
 
+  .dataset-info {
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .dataset-info h3 {
+    color: #005580;
+    margin-bottom: 15px;
+  }
+  .dataset-info p {
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.5;
+  }
+  .google-sheet-preview {
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  .google-sheet-preview img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+  }
+  .view-full-sheet {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+  .view-full-sheet:hover {
+    background-color: #0056b3;
+  }
   /* .divider {
     margin-top: 4rem;
     margin-bottom: 3rem;
