@@ -1,14 +1,18 @@
 {% extends 'base.html' %} {% block main %}
 <div class="container mt-4">
-    <h2>CO<sub>2</sub> Fuel Emission Report for {{ country }}</h2>
-    <h3>
+    <h2 class="header-style">CO<sub>2</sub> Fuel Emission Report for {{ country }}</h2>
+    <h4 class="header-style">
       {{ timeframe | capitalize }} Report from {{ start_year }} to {{ end_year
       }}
-    </h3>
-    <h4>Total CO<sub>2</sub> Emissions: {{ total_emissions }} Tons</h4>
-    <h4>Highest Emission: {{ highest_emissions.emissions | round(2) }} Tons in {{ highest_emissions.time_period }}</h4>
-    <h4>Lowest Emission: {{ lowest_emissions.emissions | round(2) }} Tons in {{ lowest_emissions.time_period }}</h4>
-    <h4>Average Emissions: {{ average_emissions }} Tons</h4>
+    </h4>
+    <div class = "stats">
+      <h6><strong>Total CO<sub>2</sub> Emissions:</strong> {{ total_emissions }} Tons</h6>
+      <h6><strong>Highest Emission:</strong> {{ highest_emissions.emissions }} Tons in {{ highest_emissions.time_period }}</h6>
+      <h6><strong>Lowest Emission:</strong> {{ lowest_emissions.emissions }} Tons in {{ lowest_emissions.time_period }}</h6>
+      <h6><strong>Average Emissions:</strong> {{ average_emissions }} Tons</h6>
+  
+    </div>
+    
     <div class="button-options">
       <button id="lineChartButton" class="btn btn-primary">Line Chart</button>
       <button id="barChartButton" class="btn btn-primary">Bar Chart</button>
@@ -16,7 +20,7 @@
 
     <canvas id="emissionChart" width="400" height="200"></canvas>
 
-    <h2>Emissions Summary</h2>
+    <h2 class="table-heading">Emissions Summary</h2>
     <table class="table">
       <thead>
         <tr>
@@ -81,17 +85,24 @@
   </script>
 
   <style>
-    .header-style,
-    .btn .btn-primary {
+    .header-style{
       text-align: center;
     }
     .button-options {
       display: flex;
       flex-direction: row;
-      justify-content: center;
+      justify-content: left;
       align-items: center;
       gap: 40px 20px;
       margin: 20px;
+      margin-left: 0px;
+    }
+
+    .stats {
+      margin-top: 2rem;
+    }
+    .table-heading{
+      margin-top: 2rem;
     }
   </style>
 

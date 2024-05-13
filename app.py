@@ -139,7 +139,7 @@ def generateReport():
         if raw_data in ["NoRecordsFound", "ErrorParsingXML", "Failed to retrieve data"]:
             flash('No data available for the selected parameters.' if raw_data == "NoRecordsFound" else 'There was an error processing your request. Please try again later.', 'warning')
             return redirect(url_for('generateReport'))
-
+        print('raw_data', raw_data)
         sorted_data = sorted(raw_data, key=lambda x: x['time_period'])
         data_summary = {}
         total_emissions = 0
@@ -149,18 +149,26 @@ def generateReport():
             time_key = item['time_period']
             emissions = float(item['emissions'])  # Ensure conversion to float
             total_emissions += emissions
-            all_emissions.append(emissions)  # Store raw emissions for min/max calculations
-            data_summary[time_key] = emissions
 
-        highest_emissions = max(sorted_data, key=lambda x: x['emissions']) if sorted_data else None
-        lowest_emissions = min(sorted_data, key=lambda x: x['emissions']) if sorted_data else None
+            # Aggregate emissions by time period
+            if time_key in data_summary:
+                data_summary[time_key] += emissions
+            else:
+                data_summary[time_key] = emissions
 
-        average_emissions = total_emissions / len(all_emissions) if all_emissions else 0
+        print('data summary', data_summary)
+
+        highest_emissions = {'time_period': max(data_summary, key=data_summary.get), 'emissions': data_summary[max(data_summary, key=data_summary.get)], 'unit': 'T'} if data_summary else None
+        lowest_emissions = {'time_period': min(data_summary, key=data_summary.get), 'emissions': data_summary[min(data_summary, key=data_summary.get)], 'unit': 'T'} if data_summary else None
+
+        print('highest_emissions', highest_emissions)
+        print('lowest_emissions', lowest_emissions)
+        average_emissions = total_emissions / len(data_summary) if data_summary else 0
 
         # Format the numbers for display in the template
         formatted_total_emissions = "{:,.2f}".format(total_emissions)
-        # formatted_highest_emissions = "{:,.2f}".format(highest_emissions)
-        # formatted_lowest_emissions = "{:,.2f}".format(lowest_emissions)
+        highest_emissions['emissions'] = "{:,.2f}".format(highest_emissions['emissions'])
+        lowest_emissions['emissions'] = "{:,.2f}".format(lowest_emissions['emissions'])
         formatted_average_emissions = "{:,.2f}".format(average_emissions)
 
         return render_template('report.html', data_summary=data_summary, 
@@ -186,15 +194,15 @@ def get_emissions(country, timeframe, start_year, month, quarter, end_year, end_
     if timeframe == 'annual':
         start_period = f"{start_year}"
         end_period = f"{end_year}"
-        time_suffix = ".A......."
+        time_suffix = f".A....._T.."  # Updated to include '_T' for all flights
     elif timeframe == 'monthly':
         start_period = f"{start_year}-{month.zfill(2)}"
         end_period = f"{end_year}-{end_month.zfill(2)}"
-        time_suffix = ".M......."
+        time_suffix = f".M....._T.."  # Updated to include '_T' for all flights
     elif timeframe == 'quarterly':
         start_period = f"{start_year}-Q{quarter}"
         end_period = f"{end_year}-Q{end_quarter}"
-        time_suffix = ".Q......."
+        time_suffix = f".Q....._T.."  # Updated to include '_T' for all flights
     
     url = f"{base_url}/{dataflow}/{country}{time_suffix}?startPeriod={start_period}&endPeriod={end_period}&dimensionAtObservation=AllDimensions"
     print("Requesting URL:", url)  # For debugging purposes
@@ -260,7 +268,7 @@ def country_ranking():
 
         base_url = "https://sdmx.oecd.org/public/rest/data"
         dataflow = "OECD.SDD.NAD.SEEA,DSD_AIR_TRANSPORT@DF_AIR_TRANSPORT,1.0"
-        time_suffix = ".M......."
+        time_suffix = f".M....._T.."  # Updated to include '_T' for all flights
         start_period = f"{start_year}-{start_month:02}"
         end_period = f"{end_year}-{end_month:02}"
         url = f"{base_url}/{dataflow}/{time_suffix}?startPeriod={start_period}&endPeriod={end_period}&dimensionAtObservation=AllDimensions"
