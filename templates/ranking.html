@@ -109,19 +109,22 @@
 <!-- Link to OECD Data Page -->
 <div class="oecd-link-container">
   <a
-    href="https://data-explorer.oecd.org/vis?fs[0]=Topic%2C1%7CEnvironment%23ENV%23%7CAir%20and%20climate%23ENV_AC%23&pg=0&fc=Topic&bp=true&snb=13&vw=tb&df[ds]=dsDisseminateFinalDMZ&df[id]=DSD_AIR_TRANSPORT%40DF_AIR_TRANSPORT&df[ag]=OECD.SDD.NAD.SEEA&df[vs]=1.0&pd=2023-01%2C2023-12&dq=.M.......&ly[cl]=TIME_PERIOD&ly[rs]=FLIGHT_TYPE%2CMETHODOLOGY&ly[rw]=EMISSIONS_SOURCE&to[TIME_PERIOD]=false&lb=bt"
+    href="https://data-explorer.oecd.org/vis?fs[0]=Topic%2C1%7CEnvironment%23ENV%23%7CAir%20and%20climate%23ENV_AC%23&pg=0&fc=Topic&bp=true&snb=13&vw=tb&df[ds]=dsDisseminateFinalDMZ&df[id]=DSD_AIR_TRANSPORT%40DF_AIR_TRANSPORT&df[ag]=OECD.SDD.NAD.SEEA&df[vs]=1.0&pd=2023-01%2C2023-12&dq=.M....._T..&ly[cl]=TIME_PERIOD&ly[rs]=FLIGHT_TYPE%2CMETHODOLOGY&ly[rw]=EMISSIONS_SOURCE&to[TIME_PERIOD]=false&lb=bt"
     target="_blank"
     class="btn btn-info"
   >
     Verify Data at OECD
   </a>
   <p class="oecd-description">
-    For a detailed validation of the data presented, please visit the OECD's Air
-    Transport CO<sub>2</sub> Emissions page. Use the provided filters to align
-    with the Monthly data and time frame shown here. The OECD (Organisation for
-    Economic Co-operation and Development) provides authoritative and reliable
-    statistical data on a variety of global metrics, including environmental
-    performance.
+    To ensure accurate verification of our data, visit the OECD's Air Transport
+    CO<sub>2</sub> Emissions page and apply specific filters to match our
+    settings. Set the <strong>Frequency of Observation</strong> to
+    <em>Monthly</em>, select the <strong>Time Period</strong> with the
+    appropriate start year, start month, end year, and end month. For
+    <strong>Flight Type</strong>, choose <em>_T (All Flights)</em>. All other
+    filters should remain at their default values ('All'). Note: Unlike our
+    model, the OECD site does not provide aggregated data or other statistical
+    measures but rather raw emission data for comparative analysis.
   </p>
 </div>
 
@@ -339,17 +342,42 @@
   }
 
   .oecd-link-container {
-    text-align: center;
-    margin-top: 20px;
+    background-color: #f9f9f9; /* Light grey background for distinction */
+    border-left: 5px solid #5cb85c; /* Green left border for emphasis */
+    padding: 20px; /* Padding for content inside the box */
+    margin-top: 20px; /* Space above the section */
+    margin-bottom: 20px; /* Space below the section */
   }
-
-  .oecd-btn {
-    margin-top: 20px;
-    margin-bottom: 20px;
+  .oecd-link-container h2 {
+    color: #333; /* Dark grey for the heading */
   }
-
-  .oecd-description {
-    margin-top: 10px;
+  .oecd-link-container p,
+  .oecd-link-container ol {
+    font-size: 1rem; /* Standard font size for text */
+    color: #505050; /* Lighter grey for text for easier reading */
+    line-height: 1.6; /* Line height for better readability */
+  }
+  .oecd-link-container a {
+    color: #007bff; /* Standard link color */
+    text-decoration: none; /* No underline to keep it clean */
+    display: block; /* Make the anchor block to take the full width for centering */
+    width: fit-content; /* Fit the content width of the button */
+    padding: 8px 12px; /* Padding inside the button */
+    background-color: #007bff; /* Background color of the button */
+    color: white; /* Text color inside the button */
+    border-radius: 5px; /* Rounded corners for the button */
+    margin: 1rem auto 1rem auto; /* Top and bottom margin of 1rem, auto left and right for centering */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+  }
+  .oecd-link-container a:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    text-decoration: none; /* Still no underline */
+  }
+  .oecd-link-container ol {
+    margin-left: 20px; /* Indent for the ordered list */
+  }
+  .oecd-link-container li {
+    margin-bottom: 10px; /* Space between list items for clarity */
   }
 </style>
 {% endblock %}

@@ -135,6 +135,9 @@ def generateReport():
             end_month=form.end_month.data if form.end_month.data else None,
             end_quarter=form.end_quarter.data if form.end_quarter.data else None
         )
+        
+        print('start_year ', form.start_year.data)
+        print('end_year', form.end_year.data)
 
         if raw_data in ["NoRecordsFound", "ErrorParsingXML", "Failed to retrieve data"]:
             flash('No data available for the selected parameters.' if raw_data == "NoRecordsFound" else 'There was an error processing your request. Please try again later.', 'warning')
@@ -143,7 +146,6 @@ def generateReport():
         sorted_data = sorted(raw_data, key=lambda x: x['time_period'])
         data_summary = {}
         total_emissions = 0
-        all_emissions = []
 
         for item in sorted_data:
             time_key = item['time_period']
@@ -204,6 +206,9 @@ def get_emissions(country, timeframe, start_year, month, quarter, end_year, end_
         end_period = f"{end_year}-Q{end_quarter}"
         time_suffix = f".Q....._T.."  # Updated to include '_T' for all flights
     
+    print('start_period', start_period)
+    print('end_period ', end_period)
+
     url = f"{base_url}/{dataflow}/{country}{time_suffix}?startPeriod={start_period}&endPeriod={end_period}&dimensionAtObservation=AllDimensions"
     print("Requesting URL:", url)  # For debugging purposes
     response = requests.get(url)
