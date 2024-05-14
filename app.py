@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, render_template, request, flash, url_for, redirect
-from forms import FuelPredictionForm, EmissionForm, EmissionRankingForm
+from forms import FuelPredictionForm, EmissionForm, EmissionRankingForm, FuelBurnForm
 import pickle
 import numpy as np
 import pandas as pd
@@ -73,8 +73,6 @@ def fuelPrediction():
         seats = float(form.seats.data)
         n_flights = float(form.n_flights.data)
         n = float(form.n_flights.data)
-        # iata_departure = form.iata_departure.data.upper()
-        # iata_arrival = form.iata_arrival.data.upper()
         icao_departure = form.icao_departure.data.upper()
         icao_arrival = form.icao_arrival.data.upper() 
         fuel_burn_seymour = float(form.fuel_burn_seymour.data)
@@ -324,6 +322,31 @@ def country_ranking():
                                    end_year=end_year, end_month=end_month)
 
     return render_template('ranking.html', form=form)
+
+
+@app.route('/fuel-calculator', methods=['GET', 'POST'])
+def fuel_burn_calculator():
+    form = FuelBurnForm()
+    if form.validate_on_submit():
+        icao_code = form.icao_code.data.upper()
+        distance = form.distance.data
+
+        aircraft = db.session.execute(
+            "SELECT avg_fuel_burn_kg_km FROM aircraft_data WHERE icao_code = :icao_code",
+            {'icao_code': icao_code}
+        ).fetchone()
+
+        if aircraft:
+            avg_fuel_burn_kg_km = aircraft.avg_fuel_burn_kg_km
+            estimated_fuel = distance * avg_fuel_burn_kg_km
+            flash(f'Estimated fuel burn for {distance} km: {estimated_fuel:.2f} kg', 'success')
+        else:
+            flash('Aircraft ICAO code not found in the database.', 'danger')
+
+        return redirect(url_for('fuel_burn_calculator'))
+
+    return render_template('fuel_burn_calculator.html', form=form)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

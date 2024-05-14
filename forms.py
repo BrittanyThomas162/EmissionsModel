@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, SubmitField, SelectField, IntegerField
+from wtforms import StringField, FloatField, SubmitField, SelectField, IntegerField, DecimalField
 from wtforms.validators import InputRequired, Length, NumberRange, DataRequired, ValidationError
 from utils import fetch_country_codes
+from flask_wtf import FlaskForm
 
 def validate_four_digit_year(form, field):
     year = field.data
@@ -41,3 +42,9 @@ class EmissionRankingForm(FlaskForm):
     end_month = SelectField('End Month', choices=[(str(i), str(i).zfill(2)) for i in range(1, 13)])
     order = SelectField('Order', choices=[('ascending', 'Ascending'), ('descending', 'Descending')], default='descending')
     submit = SubmitField('Get Ranking')
+
+
+class FuelBurnForm(FlaskForm):
+    icao_code = StringField('Aircraft ICAO Code', validators=[DataRequired(), Length(min=4, max=4, message='ICAO code must be 4 characters long')])
+    distance = DecimalField('Distance (km)', validators=[DataRequired(), NumberRange(min=0)])
+    submit = SubmitField('Calculate Fuel Burn')
